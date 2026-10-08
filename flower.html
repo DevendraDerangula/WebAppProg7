@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Devendra's Flower Finding Game</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8f0;
+            margin: 20px;
+        }
+
+        h1 {
+            color: darkgreen;
+        }
+
+        p {
+            font-size: 17px;
+        }
+
+        .game-row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .game-cell {
+            margin: 3px;
+        }
+
+        .game-cell img {
+            width: 75px;
+            height: 75px;
+            object-fit: cover;
+            border: 2px solid darkgreen;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #gameBoard {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Devendra Derangula finds avians</h1>
+
+    <p>
+        Click on the locations to find the flowers,
+        watch out for the poison ivy
+    </p>
+
+    <p id="locations">
+        Number of locations checked is zero.
+    </p>
+
+    <p id="score">
+        Score is zero.
+    </p>
+
+    <p>Click for help.</p>
+
+    <p id="help">Help report</p>
+
+    <div id="gameBoard"></div>
+
+    <script>
+        // Create the 6 by 6 game board
+        const board = document.getElementById("gameBoard");
+
+        for (let row = 0; row < 6; row++) {
+
+            const rowDiv = document.createElement("div");
+            rowDiv.className = "game-row";
+
+            for (let col = 0; col < 6; col++) {
+
+                const cellDiv = document.createElement("div");
+                cellDiv.className = "game-cell";
+
+                const img = document.createElement("img");
+
+                img.src = "images/bush.jpg";
+                img.alt = "Bush";
+                img.id = "img" + (row * 6 + col);
+
+                cellDiv.appendChild(img);
+                rowDiv.appendChild(cellDiv);
+            }
+
+            board.appendChild(rowDiv);
+        }
+    </script>
+
+</body>
+</html>
