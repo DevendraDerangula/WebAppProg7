@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Devendra's Flower Finding Game</title>
 
     <style>
@@ -44,6 +43,13 @@
         #gameBoard {
             margin-top: 20px;
         }
+
+        #helpButton {
+            cursor: pointer;
+            color: darkgreen;
+            font-weight: bold;
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -64,22 +70,38 @@
         Score is zero.
     </p>
 
-    <p>Click for help.</p>
+    <p id="helpButton" onclick="help()">
+        Click for help.
+    </p>
 
     <p id="help">Help report</p>
 
     <div id="gameBoard"></div>
 
     <script>
+        // Game variables
+        let ids = [];
+        let score = 0;
+        let locationsVisited = 0;
+        let lastLocation = 0;
+
+        let poisonLocation = 19;
+        let roseLocation = 14;
+        let lilyLocations = [3, 25];
+        let daisyLocations = [2, 5, 11, 20, 21];
+
+        let gameOver = false;
+        let visited = [];
+
         // Create the 6 by 6 game board
         const board = document.getElementById("gameBoard");
 
         for (let row = 0; row < 6; row++) {
-
             const rowDiv = document.createElement("div");
             rowDiv.className = "game-row";
 
             for (let col = 0; col < 6; col++) {
+                const position = row * 6 + col;
 
                 const cellDiv = document.createElement("div");
                 cellDiv.className = "game-cell";
@@ -88,13 +110,120 @@
 
                 img.src = "images/bush.jpg";
                 img.alt = "Bush";
-                img.id = "img" + (row * 6 + col);
+                img.id = "img" + position;
+                img.onclick = function() {
+                    check(position);
+                };
+
+                ids.push(img.id);
 
                 cellDiv.appendChild(img);
                 rowDiv.appendChild(cellDiv);
             }
 
             board.appendChild(rowDiv);
+        }
+
+        // Check a location
+        function check(position) {
+            if (gameOver) {
+                return;
+            }
+
+            const imageId = ids[position];
+            const image = document.getElementById(imageId);
+
+            // Every click counts as a location check
+            locationsVisited++;
+
+            if (!visited.includes(position)) {
+                visited.push(position);
+
+                if (position === poisonLocation) {
+                    image.src = "images/poison.jpg";
+                    image.alt = "Poison ivy";
+                    score -= 4;
+                    gameOver = true;
+                }
+                else if (position === roseLocation) {
+                    image.src = "images/rose.jpg";
+                    image.alt = "Rose";
+                    score += 4;
+                }
+                else if (lilyLocations.includes(position)) {
+                    image.src = "images/lily.jpg";
+                    image.alt = "Lily";
+                    score += 2;
+                }
+                else if (daisyLocations.includes(position)) {
+                    image.src = "images/daisy.jpg";
+                    image.alt = "Daisy";
+                    score += 1;
+                }
+            }
+
+            lastLocation = position;
+
+            document.getElementById("locations").innerHTML =
+                "Number of locations checked is " +
+                locationsVisited + ".";
+
+            document.getElementById("score").innerHTML =
+                "Score is " + score + ".";
+
+            if (gameOver) {
+                document.getElementById("help").innerHTML =
+                    "Game Over! You found the poison ivy.";
+            }
+        }
+
+        // Help function
+        function help() {
+            let result = "warm";
+
+            let row = Math.floor(lastLocation / 6);
+            let col = lastLocation % 6;
+
+            // Four neighbors with wrap around
+            let neighbors = [
+                (lastLocation + 1) % 36,
+                (lastLocation + 35) % 36,
+                (lastLocation + 6) % 36,
+                (lastLocation + 30) % 36
+            ];
+
+            // Check for daisies
+            for (let location of neighbors) {
+                if (daisyLocations.includes(location)) {
+                    result = "cold";
+                    document.getElementById("help").innerHTML =
+                        "Help report: " + result;
+                    return;
+                }
+            }
+
+            // Nine neighboring squares without wrap around
+            let nearby = [];
+
+            for (let r = row - 1; r <= row + 1; r++) {
+                for (let c = col - 1; c <= col + 1; c++) {
+                    if (r >= 0 && r < 6 && c >= 0 && c < 6) {
+                        nearby.push(r * 6 + c);
+                    }
+                }
+            }
+
+            // Check for rose
+            if (nearby.includes(roseLocation)) {
+                result = "hot";
+            }
+            // Check for poison ivy
+            else if (nearby.includes(poisonLocation)) {
+                result = "watch out";
+            }
+
+            document.getElementById("help").innerHTML =
+                "Help report: " + result;
         }
     </script>
 
