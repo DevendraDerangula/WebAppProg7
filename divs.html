@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Devendra's Dynamic DIV List</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f5ff;
+            margin: 30px;
+        }
+
+        h1 {
+            color: darkblue;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: lightgreen;
+            border: 1px solid darkblue;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background-color: #dce8ff;
+            padding: 20px;
+            margin-top: 25px;
+            gap: 10px;
+        }
+
+        .divlist {
+            background-color: white;
+            border: 2px solid darkblue;
+            border-radius: 5px;
+            padding: 20px;
+            min-width: 70px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Devendra Derangula builds list with divs</h1>
+
+    <p>Enter an item and click Add end to add it to the list.</p>
+
+    <input type="text" id="itemInput" placeholder="Enter an item">
+
+    <button onclick="addEnd()">Add end</button>
+
+    <div class="flex-container" id="container">
+
+        <div class="divlist">Apple</div>
+        <div class="divlist">Banana</div>
+        <div class="divlist">Cherry</div>
+
+    </div>
+
+    <script>
+        // Add a new element at the end
+        function addEnd() {
+            let input = document.getElementById("itemInput");
+            let value = input.value;
+
+            if (value.trim() === "") {
+                alert("Please enter an item.");
+                return;
+            }
+
+            let newDiv = document.createElement("div");
+
+            newDiv.innerHTML = value;
+            newDiv.className = "divlist";
+
+            let container = document.getElementById("container");
+
+            container.appendChild(newDiv);
+
+            input.value = "";
+        }
+    </script>
+
+</body>
+</html>
