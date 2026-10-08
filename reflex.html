@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Devendra's Reflex Game</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #eef5ff;
+            margin-top: 80px;
+        }
+
+        h1 {
+            color: darkblue;
+        }
+
+        #target {
+            font-size: 24px;
+            margin: 20px;
+        }
+
+        #counter {
+            font-size: 22px;
+            margin: 20px;
+        }
+
+        button {
+            padding: 12px 30px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 1px solid darkblue;
+        }
+
+        #goButton {
+            background-color: lightgreen;
+        }
+
+        #haltButton {
+            background-color: lightcoral;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Devendra Derangula reflexes</h1>
+
+    <div id="target">Your time</div>
+
+    <div id="counter">Count</div>
+
+    <button id="goButton">Go</button>
+
+    <button id="haltButton" onclick="recordTime()">
+        Halt
+    </button>
+
+    <script>
+        // Variable to store the time when Halt is pressed
+        let haltTime = undefined;
+
+        // Record the current time
+        function recordTime() {
+            haltTime = Date.now();
+
+            console.log("Halt time: " + haltTime);
+        }
+    </script>
+
+</body>
+</html>
