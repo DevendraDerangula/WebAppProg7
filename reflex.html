@@ -25,8 +25,10 @@
         }
 
         #counter {
-            font-size: 22px;
+            font-size: 30px;
+            font-weight: bold;
             margin: 20px;
+            color: darkred;
         }
 
         button {
@@ -56,21 +58,69 @@
 
     <div id="counter">Count</div>
 
-    <button id="goButton">Go</button>
+    <button id="goButton" onclick="beginTime()">Go</button>
 
-    <button id="haltButton" onclick="recordTime()">
-        Halt
-    </button>
+    <button id="haltButton" onclick="recordTime()">Halt</button>
 
     <script>
-        // Variable to store the time when Halt is pressed
         let haltTime = undefined;
+        let startTime = undefined;
+        let gameRunning = false;
+        let timers = [];
 
-        // Record the current time
+        // Record when Halt is pressed
         function recordTime() {
-            haltTime = Date.now();
+            if (!gameRunning || haltTime !== undefined) {
+                return;
+            }
 
+            haltTime = Date.now();
             console.log("Halt time: " + haltTime);
+        }
+
+        // Start the countdown
+        function beginTime() {
+            // Clear previous countdowns
+            for (let timer of timers) {
+                clearTimeout(timer);
+            }
+
+            timers = [];
+            haltTime = undefined;
+            startTime = Date.now();
+            gameRunning = true;
+
+            document.getElementById("target").innerHTML =
+                "Try to stop as close to zero as possible!";
+
+            // Countdown from 5 to 0
+            for (let i = 0; i <= 5; i++) {
+                let timer = setTimeout(function() {
+                    document.getElementById("counter").innerHTML =
+                        "Count: " + i;
+                }, (5 - i) * 1000);
+
+                timers.push(timer);
+            }
+
+            // Check the result after 5 seconds
+            let resultTimer = setTimeout(function() {
+                gameRunning = false;
+
+                if (haltTime === undefined) {
+                    document.getElementById("target").innerHTML =
+                        "Not soon enough";
+                }
+                else {
+                    let targetTime = startTime + 5000;
+                    let elapsedTime = targetTime - haltTime;
+
+                    document.getElementById("target").innerHTML =
+                        "Time was " + elapsedTime + " milliseconds";
+                }
+            }, 5000);
+
+            timers.push(resultTimer);
         }
     </script>
 
