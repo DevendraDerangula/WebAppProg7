@@ -27,11 +27,23 @@
 
         button {
             padding: 10px 20px;
+            margin: 5px;
             font-size: 16px;
-            background-color: lightgreen;
             border: 1px solid darkblue;
             border-radius: 5px;
             cursor: pointer;
+        }
+
+        #addEndButton {
+            background-color: lightgreen;
+        }
+
+        #addFrontButton {
+            background-color: lightblue;
+        }
+
+        #removeButton {
+            background-color: lightcoral;
         }
 
         .flex-container {
@@ -59,11 +71,15 @@
 
     <h1>Devendra Derangula builds list with divs</h1>
 
-    <p>Enter an item and click Add end to add it to the list.</p>
+    <p>Add items to the front or end, or remove every other item.</p>
 
     <input type="text" id="itemInput" placeholder="Enter an item">
 
-    <button onclick="addEnd()">Add end</button>
+    <button id="addEndButton" onclick="addEnd()">Add end</button>
+
+    <button id="addFrontButton" onclick="addFront()">Add front</button>
+
+    <button id="removeButton" onclick="removeEveryOther()">Remove</button>
 
     <div class="flex-container" id="container">
 
@@ -74,19 +90,18 @@
     </div>
 
     <script>
-        // Add a new element at the end
+        // Add an item to the end
         function addEnd() {
             let input = document.getElementById("itemInput");
-            let value = input.value;
+            let value = input.value.trim();
 
-            if (value.trim() === "") {
+            if (value === "") {
                 alert("Please enter an item.");
                 return;
             }
 
             let newDiv = document.createElement("div");
-
-            newDiv.innerHTML = value;
+            newDiv.textContent = value;
             newDiv.className = "divlist";
 
             let container = document.getElementById("container");
@@ -94,6 +109,40 @@
             container.appendChild(newDiv);
 
             input.value = "";
+        }
+
+        // Add an item to the front
+        function addFront() {
+            let input = document.getElementById("itemInput");
+            let value = input.value.trim();
+
+            if (value === "") {
+                alert("Please enter an item.");
+                return;
+            }
+
+            let newDiv = document.createElement("div");
+            newDiv.textContent = value;
+            newDiv.className = "divlist";
+
+            let container = document.getElementById("container");
+
+            container.insertBefore(newDiv, container.firstChild);
+
+            input.value = "";
+        }
+
+        // Remove first, third, fifth, etc.
+        function removeEveryOther() {
+            let divListItems =
+                document.getElementsByClassName("divlist");
+
+            // Copy the live collection into an array
+            let items = Array.from(divListItems);
+
+            for (let i = 0; i < items.length; i += 2) {
+                items[i].remove();
+            }
         }
     </script>
 
