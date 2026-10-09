@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Devendra's Flower Finding Game</title>
+    <title>Devendra's Random Flower Game</title>
 
     <style>
         body {
@@ -50,6 +50,14 @@
             font-weight: bold;
             text-decoration: underline;
         }
+
+        #restartButton {
+            background-color: lightgreen;
+            border: 1px solid darkgreen;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -76,24 +84,53 @@
 
     <p id="help">Help report</p>
 
+    <button id="restartButton" onclick="location.reload()">
+        New Game
+    </button>
+
     <div id="gameBoard"></div>
 
     <script>
-        // Game variables
         let ids = [];
         let score = 0;
         let locationsVisited = 0;
         let lastLocation = 0;
-
-        let poisonLocation = 19;
-        let roseLocation = 14;
-        let lilyLocations = [3, 25];
-        let daisyLocations = [2, 5, 11, 20, 21];
-
         let gameOver = false;
         let visited = [];
 
-        // Create the 6 by 6 game board
+        // BONUS: Generate unique random locations
+        let availableLocations = [];
+
+        for (let i = 0; i < 36; i++) {
+            availableLocations.push(i);
+        }
+
+        function getRandomLocation() {
+            let randomIndex = Math.floor(
+                Math.random() * availableLocations.length
+            );
+
+            return availableLocations.splice(randomIndex, 1)[0];
+        }
+
+        // BONUS: Random poison ivy, rose, lilies and daisies
+        let poisonLocation = getRandomLocation();
+        let roseLocation = getRandomLocation();
+
+        let lilyLocations = [
+            getRandomLocation(),
+            getRandomLocation()
+        ];
+
+        let daisyLocations = [
+            getRandomLocation(),
+            getRandomLocation(),
+            getRandomLocation(),
+            getRandomLocation(),
+            getRandomLocation()
+        ];
+
+        // Create the 6 by 6 board
         const board = document.getElementById("gameBoard");
 
         for (let row = 0; row < 6; row++) {
@@ -101,16 +138,16 @@
             rowDiv.className = "game-row";
 
             for (let col = 0; col < 6; col++) {
-                const position = row * 6 + col;
+                let position = row * 6 + col;
 
-                const cellDiv = document.createElement("div");
+                let cellDiv = document.createElement("div");
                 cellDiv.className = "game-cell";
 
-                const img = document.createElement("img");
-
+                let img = document.createElement("img");
                 img.src = "images/bush.jpg";
                 img.alt = "Bush";
                 img.id = "img" + position;
+
                 img.onclick = function() {
                     check(position);
                 };
@@ -124,16 +161,55 @@
             board.appendChild(rowDiv);
         }
 
+        // BONUS: Move rose one square randomly
+        function moveRose() {
+            let row = Math.floor(roseLocation / 6);
+            let col = roseLocation % 6;
+
+            let possibleMoves = [];
+
+            if (row > 0) {
+                possibleMoves.push(roseLocation - 6);
+            }
+
+            if (row < 5) {
+                possibleMoves.push(roseLocation + 6);
+            }
+
+            if (col > 0) {
+                possibleMoves.push(roseLocation - 1);
+            }
+
+            if (col < 5) {
+                possibleMoves.push(roseLocation + 1);
+            }
+
+            // Keep rose separate from other special locations
+            possibleMoves = possibleMoves.filter(function(pos) {
+                return pos !== poisonLocation &&
+                       !lilyLocations.includes(pos) &&
+                       !daisyLocations.includes(pos);
+            });
+
+            if (possibleMoves.length === 0) {
+                return;
+            }
+
+            let randomMove = Math.floor(
+                Math.random() * possibleMoves.length
+            );
+
+            roseLocation = possibleMoves[randomMove];
+        }
+
         // Check a location
         function check(position) {
             if (gameOver) {
                 return;
             }
 
-            const imageId = ids[position];
-            const image = document.getElementById(imageId);
+            let image = document.getElementById(ids[position]);
 
-            // Every click counts as a location check
             locationsVisited++;
 
             if (!visited.includes(position)) {
@@ -164,6 +240,21 @@
 
             lastLocation = position;
 
+            // Move the rose after each click
+            if (!gameOver) {
+                moveRose();
+
+                // If rose lands on the player, game ends
+                if (roseLocation === position) {
+                    image.src = "images/rose.jpg";
+                    image.alt = "Rose";
+                    gameOver = true;
+
+                    document.getElementById("help").innerHTML =
+                        "Game Over! The moving rose found you.";
+                }
+            }
+
             document.getElementById("locations").innerHTML =
                 "Number of locations checked is " +
                 locationsVisited + ".";
@@ -171,7 +262,7 @@
             document.getElementById("score").innerHTML =
                 "Score is " + score + ".";
 
-            if (gameOver) {
+            if (position === poisonLocation) {
                 document.getElementById("help").innerHTML =
                     "Game Over! You found the poison ivy.";
             }
@@ -184,7 +275,7 @@
             let row = Math.floor(lastLocation / 6);
             let col = lastLocation % 6;
 
-            // Four neighbors with wrap around
+            // Four neighboring positions with wrap around
             let neighbors = [
                 (lastLocation + 1) % 36,
                 (lastLocation + 35) % 36,
@@ -192,32 +283,31 @@
                 (lastLocation + 30) % 36
             ];
 
-            // Check for daisies
             for (let location of neighbors) {
                 if (daisyLocations.includes(location)) {
                     result = "cold";
+
                     document.getElementById("help").innerHTML =
                         "Help report: " + result;
                     return;
                 }
             }
 
-            // Nine neighboring squares without wrap around
+            // Nine nearby positions without wrap around
             let nearby = [];
 
             for (let r = row - 1; r <= row + 1; r++) {
                 for (let c = col - 1; c <= col + 1; c++) {
-                    if (r >= 0 && r < 6 && c >= 0 && c < 6) {
+                    if (r >= 0 && r < 6 &&
+                        c >= 0 && c < 6) {
                         nearby.push(r * 6 + c);
                     }
                 }
             }
 
-            // Check for rose
             if (nearby.includes(roseLocation)) {
                 result = "hot";
             }
-            // Check for poison ivy
             else if (nearby.includes(poisonLocation)) {
                 result = "watch out";
             }
