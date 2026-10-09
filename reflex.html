@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Devendra's Reflex Game</title>
+    <title>Devendra's Random Reflex Game</title>
 
     <style>
         body {
@@ -75,12 +75,14 @@
             }
 
             haltTime = Date.now();
+
             console.log("Halt time: " + haltTime);
         }
 
-        // Start the countdown
+        // Start the random countdown
         function beginTime() {
-            // Clear previous countdowns
+
+            // Clear any previous countdown timers
             for (let timer of timers) {
                 clearTimeout(timer);
             }
@@ -90,35 +92,56 @@
             startTime = Date.now();
             gameRunning = true;
 
+            // BONUS: Generate a random number from 2 to 10
+            let randomCount =
+                Math.floor(Math.random() * 9) + 2;
+
+            console.log("Random starting number: " + randomCount);
+
             document.getElementById("target").innerHTML =
                 "Try to stop as close to zero as possible!";
 
-            // Countdown from 5 to 0
-            for (let i = 0; i <= 5; i++) {
+            // Display the random starting number immediately
+            document.getElementById("counter").innerHTML =
+                "Count: " + randomCount;
+
+            // Countdown from randomCount to zero
+            for (let i = randomCount - 1; i >= 0; i--) {
+
                 let timer = setTimeout(function() {
+
                     document.getElementById("counter").innerHTML =
                         "Count: " + i;
-                }, (5 - i) * 1000);
+
+                }, (randomCount - i) * 1000);
 
                 timers.push(timer);
             }
 
-            // Check the result after 5 seconds
+            // Check the result when the countdown reaches zero
             let resultTimer = setTimeout(function() {
+
                 gameRunning = false;
 
                 if (haltTime === undefined) {
-                    document.getElementById("target").innerHTML =
-                        "Not soon enough";
-                }
-                else {
-                    let targetTime = startTime + 5000;
-                    let elapsedTime = targetTime - haltTime;
 
                     document.getElementById("target").innerHTML =
-                        "Time was " + elapsedTime + " milliseconds";
+                        "Not soon enough";
+
+                } else {
+
+                    let targetTime =
+                        startTime + randomCount * 1000;
+
+                    let elapsedTime =
+                        targetTime - haltTime;
+
+                    document.getElementById("target").innerHTML =
+                        "Time was " + elapsedTime +
+                        " milliseconds";
                 }
-            }, 5000);
+
+            }, randomCount * 1000);
 
             timers.push(resultTimer);
         }
