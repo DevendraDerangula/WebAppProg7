@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Devendra's Dynamic DIV List</title>
 
     <style>
@@ -46,6 +45,10 @@
             background-color: lightcoral;
         }
 
+        #shuffleButton {
+            background-color: khaki;
+        }
+
         .flex-container {
             display: flex;
             flex-wrap: wrap;
@@ -71,7 +74,7 @@
 
     <h1>Devendra Derangula builds list with divs</h1>
 
-    <p>Add items to the front or end, or remove every other item.</p>
+    <p>Add items, remove every other item, or shuffle two items.</p>
 
     <input type="text" id="itemInput" placeholder="Enter an item">
 
@@ -81,16 +84,16 @@
 
     <button id="removeButton" onclick="removeEveryOther()">Remove</button>
 
-    <div class="flex-container" id="container">
+    <button id="shuffleButton" onclick="shuffle()">Shuffle</button>
 
+    <div class="flex-container" id="container">
         <div class="divlist">Apple</div>
         <div class="divlist">Banana</div>
         <div class="divlist">Cherry</div>
-
     </div>
 
     <script>
-        // Add an item to the end
+        // Add item to the end
         function addEnd() {
             let input = document.getElementById("itemInput");
             let value = input.value.trim();
@@ -105,13 +108,12 @@
             newDiv.className = "divlist";
 
             let container = document.getElementById("container");
-
             container.appendChild(newDiv);
 
             input.value = "";
         }
 
-        // Add an item to the front
+        // Add item to the front
         function addFront() {
             let input = document.getElementById("itemInput");
             let value = input.value.trim();
@@ -126,23 +128,49 @@
             newDiv.className = "divlist";
 
             let container = document.getElementById("container");
-
             container.insertBefore(newDiv, container.firstChild);
 
             input.value = "";
         }
 
-        // Remove first, third, fifth, etc.
+        // Remove every other element
         function removeEveryOther() {
             let divListItems =
                 document.getElementsByClassName("divlist");
 
-            // Copy the live collection into an array
             let items = Array.from(divListItems);
 
             for (let i = 0; i < items.length; i += 2) {
                 items[i].remove();
             }
+        }
+
+        // BONUS: Shuffle two random elements
+        function shuffle() {
+            let container = document.getElementById("container");
+
+            let items = container.getElementsByClassName("divlist");
+
+            if (items.length < 2) {
+                alert("Add at least two items to shuffle.");
+                return;
+            }
+
+            // Generate two different random positions
+            let first = Math.floor(Math.random() * items.length);
+            let second = Math.floor(Math.random() * items.length);
+
+            while (first === second) {
+                second = Math.floor(Math.random() * items.length);
+            }
+
+            // Swap the contents of the two elements
+            let temp = items[first].textContent;
+
+            items[first].textContent = items[second].textContent;
+            items[second].textContent = temp;
+
+            console.log("Swapped positions " + first + " and " + second);
         }
     </script>
 
